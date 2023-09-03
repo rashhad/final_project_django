@@ -1,0 +1,39 @@
+<div id="header-wrapper">
+    <header id="header" class="container">
+
+        <!-- Logo -->
+            <div id="logo">
+                <h1><a href="{% url 'home' %}">AmarBolg</a></h1>
+            </div>
+
+        <!-- Nav -->
+        <div class="d-flex flex-row-reverse bd-highlight">
+            <nav id="nav" class = "row">
+                <ul>
+                    <li  {% if title == 'Home' %}class="current"{% endif %}><a href="{% url 'home' %}">Home</a></li>
+                    {% if user.is_authenticated %}
+                    <li {% if title == 'Profile' %}class="current"{% endif %}><a href="{% url 'profile' %}">Profile</a></li>
+                    <li><a href="{% url 'logout' %}">Logout</a></li>
+                    {% else %}
+                    <li {% if title == 'Login' %}class="current"{% endif %}><a href="{% url 'login' %}">Login</a></li>
+                    <li {% if title == 'Sign up' %} class="current" {% endif %} ><a href="{% url 'signup' %}">Sign Up</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+            <div class="row">
+                <div class="col-md-12 mx-auto">
+                    <form method='get' action="{% url 'search' %}">
+                    <div class="input-group">
+                        <input class="form-control border-end-0 border rounded-pill" type="search" placeholder="Search a Title" name='search'>
+                        <span class="input-group-append">
+                            <button class="btn btn-outline-secondary bg-white border-bottom-0 border rounded-pill ms-n5" type="button">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </span>
+                    </div>
+                </form>
+                </div>
+            </div>
+        </div>
+    </header>
+</div>

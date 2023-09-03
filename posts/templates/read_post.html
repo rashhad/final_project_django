@@ -1,0 +1,37 @@
+{% extends 'core/base.html' %}
+{% block content %}
+<div id="main-wrapper">
+    <div class="container">
+        <div>
+            <!-- Content -->
+                <div id="content">
+                    {% if user == object.blogger %}
+                        <div class="d-flex flex-row-reverse bd-highlight">
+                            <div class="p-2 bd-highlight">
+                                <form method='post' action="{% url 'delete' object.id %}"> {% csrf_token %}
+                                    <button type="submit" class ="btn btn-warning">Delete</button>
+                                </form>
+                            </div>
+                            <div class="p-2 bd-highlight">
+                                <a href="{% url 'edit' object.id %}" class="btn btn-info">Edit</a>
+                            </div>
+                        </div>
+                    {% endif %}
+                    <section class="last">
+                        <h2> {{object.title}} </h2>
+                        <small> By {{object.blogger.first_name}} {{object.blogger.last_name}} </small>
+                        <div class="d-flex justify-content-between">
+                            <p>{{object.pub_date|date:"d/m/Y - H:m"}}</p>
+                            <p>Last updated: {{object.mod_date|date:"d/m/Y - H:m"}} </p>
+                        </div>
+                        </br>
+                        <p>
+                            {{object.content}}
+                        </p>
+                    </section>
+                </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

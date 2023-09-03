@@ -1,0 +1,96 @@
+{% extends 'core/base.html' %} 
+{% load crispy_forms_tags %}
+{% load static %}
+{% block title %}{{title}}{% endblock title %}
+{% block content %}
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Update Profile</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method='post'>
+                {% csrf_token %}
+                <div class="modal-body">
+                    {{form|crispy}}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Update</button>
+                </div>
+            </form>
+        </div>
+    </div>
+  </div>
+
+<!-- Main -->
+<div id="main-wrapper">
+  <div class="container">
+    <div class="row gtr-200">
+      <div class="col-4 col-12-medium">
+        <div id="sidebar">
+          <!-- Sidebar -->
+          <section>
+            <h3>Hi, {{user.first_name}}</h3>
+            <p>
+              Your profile looks good. Do you want to update?
+            </p>
+            <footer>
+              {% comment %} <a href="#" class="button icon solid fa-info-circle"
+                >Find out more</a> {% endcomment %}
+              <!-- Button trigger modal -->
+                <button type="button" class="btn btn-primary m-2" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    Update
+                </button>
+                </br>
+                <a href="{% url 'passChange' %}" class='btn btn-warning m-2'> Change Password </a>
+            </footer>
+          </section>
+
+          <section>
+            <h3>To Do</h3>
+            <ul class="style2">
+              <li><a href="{% url 'create' %}">Start Writting</a></li>
+            </ul>
+          </section>
+        </div>
+      </div>
+      <div class="col-8 col-12-medium imp-medium">
+        <div id="content">
+          <!-- Content -->
+          <article>
+            <h2>Hi! I'm {{user.first_name}} {{user.last_name}}:</h2>
+
+            <p>
+              {{user.profile.about}}
+            </p>
+            <h3>Some of My Blogs</h3>
+            	<!-- Blogs -->
+              <div class="row row-cols-1 row-cols-md-3 g-4">
+                {% for blog in blogs %}
+                <div class="col">
+                <div class="card">
+                  <div class="card-body">
+                    <h5 class="card-title"> <a href="{% url 'read' blog.id %}"> {{blog.title|title}} </a> </h5>
+                    <p class="card-text"> {{blog.content|truncatewords:8}} <a href="{% url 'read' blog.id %}" >Read more</a> </p>
+                  </div>
+                  <div class="card-footer">
+                    <small class="text-muted"> Topic: {{blog.get_topic_display}} </small>
+                    </br>
+                    <small class="text-muted"> Published: {{blog.pub_date|date:"d/m/Y"}} </small>
+                    <small class="text-muted"> Updated: {{blog.mod_date|date:"d/m/Y"}} </small>
+                  </div>
+                </div>
+                </div>
+                {% endfor %}
+              </div>
+          </article>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock content %}

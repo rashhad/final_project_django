@@ -1,0 +1,8 @@
+{% extends 'core/base.html' %}
+{% block content %}
+<form method="post" style='width:50%;margin:auto'>
+    {% csrf_token %}
+    {{form}}
+    <button type="submit" class="btn btn-primary mt-2">Change</button>
+</form>
+{% endblock content %}

@@ -1,0 +1,39 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block title %} {{title}} {% endblock title %}
+{% block content %}
+	
+	<!-- Features -->
+		<div id="features-wrapper">
+			<div class="container">
+				<div class="row">
+                    {% if object_list %}
+					{% for item in object_list %}
+					<div class="col-4 col-12-medium">
+                        
+                        <!-- Box -->
+						<section class="box feature">
+                            <div class="inner">
+                                <header>
+                                    <a href="{% url 'read' item.id %}">
+                                        <h2> {{item.title|title}} </h2>
+                                    </a>
+									<p>{{item.get_topic_display}}</p>
+									<p>{{item.pub_date|date:"d/m/Y h:m:s"}}</p>
+								</header>
+								<p> {{item.content|truncatewords:10}} </p>
+							</div>
+						</section>
+						
+					</div>
+					{% endfor %}
+					{% elif title == 'Search Result' %}
+						<h3> Oop! No blogs under this title! </h3>
+                    {% else %}
+                        <h3> Oh! No blogs under this topic - {{title|title}}! </h3>
+                    {% endif %}
+				</div>
+			</div>
+		</div>
+
+{% endblock content %}
