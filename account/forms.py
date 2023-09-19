@@ -4,7 +4,7 @@ from . import models
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.contrib.auth.models import User
 from . import choices
-
+import os
 
 class registrationForm(UserCreationForm):
     dob=forms.DateField(required=True, widget=forms.DateInput(attrs={'type':'date'}))
@@ -37,6 +37,7 @@ class registrationForm(UserCreationForm):
 
 class UpdateForm(UserChangeForm):
     password=None
+    profile_picture = forms.FileField(max_length=100, required=False)
     dob=forms.DateField(required=True, widget=forms.DateInput())
     gender=forms.ChoiceField(choices=choices.GENDER, required=True)
     address=forms.CharField(widget=forms.TextInput)
@@ -51,13 +52,12 @@ class UpdateForm(UserChangeForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
         if self.instance:
             try:
                 user_instance = self.instance
             except models.profile.DoesNotExist:
                 user_instance = None
-
+                
             if user_instance:
                 self.fields['gender'].initial = user_instance.profile.gender
                 self.fields['dob'].initial = user_instance.profile.dob
@@ -66,6 +66,11 @@ class UpdateForm(UserChangeForm):
 
     def save(self) -> Any:
         user = super().save()
+        old_image = models.profile.objects.get(user=user)
+        if old_image.pro_pic:
+            image_path = old_image.pro_pic.path
+            if os.path.exists(image_path):
+                os.remove(image_path)
         data=self.cleaned_data
         models.profile.objects.filter(user=user).update(
             dob=data['dob'],
@@ -73,3 +78,5 @@ class UpdateForm(UserChangeForm):
             address=data['address'],
             about=data['about'],
         )
+        old_image.pro_pic=data['profile_picture']
+        old_image.save()

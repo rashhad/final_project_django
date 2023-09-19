@@ -10,3 +10,7 @@ class posts(models.Model):
     content=models.TextField()
     pub_date=models.DateTimeField(auto_now_add=True)
     mod_date=models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.title}"
+    

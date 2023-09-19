@@ -9,3 +9,4 @@ class profile(models.Model):
     gender=models.CharField(max_length=10, choices=choices.GENDER)
     about = models.TextField(blank=True)
     address=models.TextField()
+    pro_pic = models.ImageField(upload_to='pro_pic/', null=True)

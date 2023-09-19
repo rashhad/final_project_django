@@ -8,6 +8,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from posts.models import posts
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
+from django.core.paginator import Paginator
 # Create your views here.
 
 class signUp(generic.CreateView):
@@ -38,22 +39,37 @@ class logout(LogoutView):
     def get_success_url(self):
         return reverse_lazy('login')
 
-def profile(request):
-    form=forms.UpdateForm()
-    return render(request,'./profile.html',{'form':form})
-
 
 class profile(LoginRequiredMixin, View):
     def get(self, request):
         blogs=posts.objects.filter(blogger=request.user)
-        form=forms.UpdateForm(instance=request.user)
-        return render(request,'./profile.html',{'form':form, 'blogs':blogs, 'title':'Profile'})
+        p=Paginator(blogs, 3)
+        page_num=self.request.GET.get('page')
+        page_obj=p.get_page(page_num)
+        context={
+            'blogs':blogs,
+            'title':'Profile',
+            'page_obj':page_obj,
+        }
+        if not request.user.is_superuser:
+            context['form']=forms.UpdateForm(instance=request.user)
+        return render(request,'./profile.html',context)
     
     def post(self, request):
-        form=forms.UpdateForm(request.POST, instance=request.user)
+        form=forms.UpdateForm(request.POST, request.FILES, instance=request.user)
+        blogs=posts.objects.filter(blogger=request.user)
+        p=Paginator(blogs, 3)
+        page_num=self.request.GET.get('page')
+        page_obj=p.get_page(page_num)
         if form.is_valid():
             form.save()
-        return render(request,'./profile.html',{'form':form, 'title':'Profile'})
+        context = {
+            'form':form,
+            'title':'Profile',
+            'page_obj':page_obj,
+            }
+        # print(self.request.user.profile.pro_pic.url)
+        return render(request,'./profile.html', context)
     
     
 

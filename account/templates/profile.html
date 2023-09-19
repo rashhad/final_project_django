@@ -3,7 +3,8 @@
 {% load static %}
 {% block title %}{{title}}{% endblock title %}
 {% block content %}
-  <!-- Modal -->
+
+<!-- Modal -->
   <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -11,7 +12,7 @@
                 <h5 class="modal-title" id="exampleModalLabel">Update Profile</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form method='post'>
+            <form method='post' enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="modal-body">
                     {{form|crispy}}
@@ -59,34 +60,40 @@
       </div>
       <div class="col-8 col-12-medium imp-medium">
         <div id="content">
+          {% if user.profile.pro_pic %}
+            <img src="{{user.profile.pro_pic.url}}" class="rounded" alt="..." width='300'>
+          {% else %}
+            <img src="{% static 'dummy.jpg' %}" class="rounded" alt="..." width=200>
+          {% endif %}
           <!-- Content -->
-          <article>
-            <h2>Hi! I'm {{user.first_name}} {{user.last_name}}:</h2>
+            <article>
+              <h2>Hi! I'm {{user.first_name}} {{user.last_name}}:</h2>
 
-            <p>
-              {{user.profile.about}}
-            </p>
-            <h3>Some of My Blogs</h3>
+              <p>
+                {{user.profile.about}}
+              </p>
+              <h3>Some of My Blogs</h3>
             	<!-- Blogs -->
               <div class="row row-cols-1 row-cols-md-3 g-4">
-                {% for blog in blogs %}
+                {% for blog in page_obj.object_list %}
                 <div class="col">
-                <div class="card">
-                  <div class="card-body">
-                    <h5 class="card-title"> <a href="{% url 'read' blog.id %}"> {{blog.title|title}} </a> </h5>
-                    <p class="card-text"> {{blog.content|truncatewords:8}} <a href="{% url 'read' blog.id %}" >Read more</a> </p>
+                  <div class="card">
+                    <div class="card-body">
+                      <h5 class="card-title"> <a href="{% url 'read' blog.id %}"> {{blog.title|title}} </a> </h5>
+                      <p class="card-text"> {{blog.content|truncatewords:8}} <a href="{% url 'read' blog.id %}" >Read more</a> </p>
+                    </div>
+                    <div class="card-footer">
+                      <small class="text-muted"> Topic: {{blog.get_topic_display}} </small>
+                      </br>
+                      <small class="text-muted"> Published: {{blog.pub_date|date:"d/m/Y"}} </small>
+                      <small class="text-muted"> Updated: {{blog.mod_date|date:"d/m/Y"}} </small>
+                    </div>
                   </div>
-                  <div class="card-footer">
-                    <small class="text-muted"> Topic: {{blog.get_topic_display}} </small>
-                    </br>
-                    <small class="text-muted"> Published: {{blog.pub_date|date:"d/m/Y"}} </small>
-                    <small class="text-muted"> Updated: {{blog.mod_date|date:"d/m/Y"}} </small>
-                  </div>
-                </div>
                 </div>
                 {% endfor %}
               </div>
-          </article>
+            </article>
+            {% include 'pagination_profile.html' %}
         </div>
       </div>
     </div>

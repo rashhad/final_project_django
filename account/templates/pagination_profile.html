@@ -1,0 +1,13 @@
+<nav area-label="selected topic">
+    <ul class="pagination pagination-sm">
+        {% if page_obj.has_previous %}
+        <li class="page-item"><a class="page-link" href="{{ request.path }}?page={{page_obj.previous_page_number}}">Previous</a></li>
+        {% endif %}
+        {% for x in page_obj.paginator.page_range %}
+        <li class="page-item {% if x == page_obj.number %} disabled fw-bold{% endif %}"><a class="page-link" href="{{ request.path }}?page={{x}}">{{x}}</a></li>
+        {% endfor %}
+      {% if page_obj.has_next %}
+      <li class="page-item"><a class="page-link" href="{{ request.path }}?page={{page_obj.next_page_number}}">Next</a></li>
+      {% endif %}
+    </ul>
+</nav>

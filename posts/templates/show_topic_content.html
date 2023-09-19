@@ -7,8 +7,8 @@
 		<div id="features-wrapper">
 			<div class="container">
 				<div class="row">
-                    {% if object_list %}
-					{% for item in object_list %}
+                    {% if page_obj.object_list %}
+					{% for item in page_obj.object_list %}
 					<div class="col-4 col-12-medium">
                         
                         <!-- Box -->
@@ -24,7 +24,6 @@
 								<p> {{item.content|truncatewords:10}} </p>
 							</div>
 						</section>
-						
 					</div>
 					{% endfor %}
 					{% elif title == 'Search Result' %}
@@ -32,6 +31,11 @@
                     {% else %}
                         <h3> Oh! No blogs under this topic - {{title|title}}! </h3>
                     {% endif %}
+					{% if title == 'Search Result' %}
+						{% include 'pagination_search.html' %}
+					{% else %}
+						{% include 'pagination.html' %}
+					{% endif %}
 				</div>
 			</div>
 		</div>
