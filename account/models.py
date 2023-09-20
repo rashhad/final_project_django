@@ -10,3 +10,7 @@ class profile(models.Model):
     about = models.TextField(blank=True)
     address=models.TextField()
     pro_pic = models.ImageField(upload_to='pro_pic/', null=True)
+
+
+    def __str__(self) -> str:
+        return f"{self.user.first_name}-{self.gender}-{self.about}"

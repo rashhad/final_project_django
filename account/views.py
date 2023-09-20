@@ -41,6 +41,7 @@ class logout(LogoutView):
 
 
 class profile(LoginRequiredMixin, View):
+    template_name = 'profile.html'
     def get(self, request):
         blogs=posts.objects.filter(blogger=request.user)
         p=Paginator(blogs, 3)
@@ -53,23 +54,14 @@ class profile(LoginRequiredMixin, View):
         }
         if not request.user.is_superuser:
             context['form']=forms.UpdateForm(instance=request.user)
-        return render(request,'./profile.html',context)
+        return render(request,self.template_name,context)
     
     def post(self, request):
         form=forms.UpdateForm(request.POST, request.FILES, instance=request.user)
-        blogs=posts.objects.filter(blogger=request.user)
-        p=Paginator(blogs, 3)
-        page_num=self.request.GET.get('page')
-        page_obj=p.get_page(page_num)
         if form.is_valid():
             form.save()
-        context = {
-            'form':form,
-            'title':'Profile',
-            'page_obj':page_obj,
-            }
-        # print(self.request.user.profile.pro_pic.url)
-        return render(request,'./profile.html', context)
+            return redirect('profile')
+        return render(request,self.template_name, {'form':form})
     
     
 

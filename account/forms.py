@@ -54,29 +54,31 @@ class UpdateForm(UserChangeForm):
         super().__init__(*args, **kwargs)
         if self.instance:
             try:
-                user_instance = self.instance
+                user_instance = self.instance.profile
             except models.profile.DoesNotExist:
                 user_instance = None
                 
             if user_instance:
-                self.fields['gender'].initial = user_instance.profile.gender
-                self.fields['dob'].initial = user_instance.profile.dob
-                self.fields['address'].initial = user_instance.profile.address
-                self.fields['about'].initial = user_instance.profile.about
+                self.fields['gender'].initial = user_instance.gender
+                self.fields['dob'].initial = user_instance.dob
+                self.fields['address'].initial = user_instance.address
+                self.fields['about'].initial = user_instance.about
 
     def save(self) -> Any:
         user = super().save()
         old_image = models.profile.objects.get(user=user)
-        if old_image.pro_pic:
+        data=self.cleaned_data
+        if old_image.pro_pic and data['profile_picture']:
             image_path = old_image.pro_pic.path
             if os.path.exists(image_path):
                 os.remove(image_path)
-        data=self.cleaned_data
-        models.profile.objects.filter(user=user).update(
-            dob=data['dob'],
-            gender=data['gender'],
-            address=data['address'],
-            about=data['about'],
-        )
-        old_image.pro_pic=data['profile_picture']
+            old_image.pro_pic=data['profile_picture']
+            print('chosen new pro pic, old pro pic o/w')
+        elif old_image.pro_pic == '' and data['profile_picture']:
+            old_image.pro_pic=data['profile_picture']
+            print('new pro pic set')
+        old_image.dob=data['dob']
+        old_image.gender=data['gender']
+        old_image.address=data['address']
+        old_image.about=data['about']
         old_image.save()
